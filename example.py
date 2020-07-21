@@ -31,6 +31,7 @@ while vidcap.isOpened():
         img = cv2.imread(r"./images/frame%d.jpg" % count)
         cv2.line(img, (0, 0), (0, img.shape[0]), (255, 0, 0), 1, 1)
         cv2.imwrite("./images/frame%d_grid.jpg" % count, img)
+
         print('Saved frame%d.jpg' % count)
         count += 1
 
