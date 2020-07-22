@@ -1,4 +1,5 @@
 import numpy as np
+from scipy import signal
 import cv2
 
 cap = cv2.VideoCapture('./test_video1.mp4')
@@ -35,18 +36,30 @@ while(1):
     # Select good points
     good_new = p1[st==1]
     good_old = p0[st==1]
-
+    p0 = p1
+    old_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    vis = cv2.cvtColor(frame_gray, cv2.COLOR_GRAY2BGR)
     # draw the tracks
     for i,(new,old) in enumerate(zip(good_new,good_old)):
-        a,b = new.ravel()
-        c,d = old.ravel()
-        mask = cv2.line(mask, (a,b),(c,d), color[i].tolist(), 2)
-        frame = cv2.circle(frame,(a,b),5,color[i].tolist(),-1)
-    img = cv2.add(frame,mask)
+        a,b = old.ravel()
+        c,d = new.ravel()
+        #mask = cv2.line(mask, (a,b),(c,d), color[i].tolist(), 2)
+        #frame = cv2.circle(frame,(a,b),5,color[i].tolist(),-1)
+        # create line endpoints
+        lines = np.vstack([a,b,c,d]).T.reshape(-1, 2, 2)
+        lines = np.int32(lines)
+        # create image and draw
+        #vis = cv2.cvtColor(frame_gray, cv2.COLOR_GRAY2BGR)
+        for (x1, y1), (x2, y2) in lines:
+            if np.linalg.norm(np.array([x1, y1]) - np.array([x2, y2])) < 2:
+                continue
+            cv2.line(vis, (x1, y1), (x2, y2), (0, 0, 255), 2)
+            cv2.circle(vis, (x2, y2), 1, (0, 0, 255), 2)
+    #img = cv2.add(frame,mask)
     #cv2.imwrite("./images/frame%d.jpg" % count, img)
     count=count+1
-    cv2.imshow('frame',img)
-    k = cv2.waitKey(30) & 0xff
+    cv2.imshow('frame',vis)
+    k = cv2.waitKey(50) & 0xff
     if k == 27:
         break
 
