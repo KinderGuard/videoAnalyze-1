@@ -78,13 +78,13 @@ while True:
                     continue  # 이전 포인트와 다음 포인트의 차의 벡터 크기가 2보다 작으면 pass
                 cv2.line(vis, (x1, y1), (x2, y2), (0, 0, 255), 2)  # 아님 line긋고
                 cv2.circle(vis, (x2, y2), 1, (0, 0, 255), 2)  # 콩나물 대가리(다음 포인트에)
-                cv2.circle(blank_image, (x2, y2), 1, (0, 0, 255), 50)  # 빈 이미지에 optical flow 포인트 표시
+                cv2.circle(blank_image, (x2, y2), 4, (0, 0, 255), 8)  # 빈 이미지에 optical flow 포인트 표시 # 두께 더 두껍게 하면 line없이도 contour가 인식할 수 있을까??
                 if np.linalg.norm(np.array([px, py]) - np.array([x2, y2])) > 6000:  # 이전 포인트와 거리가 멀면 continue
                     px = x2  # 현재 포인트를 이전 포인트로 저장
                     py = y2
                     continue
-                #if px >= 0 and py >= 0:  # 이전 포인트와 충분히 가깝고, 첫 프레임이 아닐 경우
-                 #   cv2.line(blank_image, (px, py), (x2, y2), (0, 0, 255), 10)
+                if px >= 0 and py >= 0:  # 이전 포인트와 충분히 가깝고, 첫 프레임이 아닐 경우
+                    cv2.line(blank_image, (px, py), (x2, y2), (0, 0, 255), 10)# line 그리는 이유: 그냥 circle만 있으면 contour 인식 못해서..
                 px = x2  # 현재 포인트를 이전 포인트로 저장
                 py = y2
         blank_image = Image.fromarray(blank_image, 'RGB')  # 포인트를 그린 빈 이미지를 rgb형태 이미지 파일 변환
@@ -124,7 +124,7 @@ while True:
             cv2.putText(vis, "Room Status: {}".format(text), (10, 20),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
             cv2.putText(vis, datetime.datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"),
-                        (10, img.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+                        (10, vis.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
             # show the frame and record if the user presses a key
         cv2.imshow("Security Feed", vis)
         cv2.imshow("Points", img)
