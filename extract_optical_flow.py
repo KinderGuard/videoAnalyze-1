@@ -78,7 +78,7 @@ while True:
                     continue  # 이전 포인트와 다음 포인트의 차의 벡터 크기가 2보다 작으면 pass
                 cv2.line(vis, (x1, y1), (x2, y2), (0, 0, 255), 2)  # 아님 line긋고
                 cv2.circle(vis, (x2, y2), 1, (0, 0, 255), 2)  # 콩나물 대가리(다음 포인트에)
-                cv2.circle(blank_image, (x2, y2), 4, (0, 0, 255), 8)  # 빈 이미지에 optical flow 포인트 표시 # 두께 더 두껍게 하면 line없이도 contour가 인식할 수 있을까??
+                cv2.circle(blank_image, (x2, y2), 4, (0, 0, 255), 10)  # 빈 이미지에 optical flow 포인트 표시 # 두께 더 두껍게 하면 line없이도 contour가 인식할 수 있을까??
                 if np.linalg.norm(np.array([px, py]) - np.array([x2, y2])) > 6000:  # 이전 포인트와 거리가 멀면 continue
                     px = x2  # 현재 포인트를 이전 포인트로 저장
                     py = y2
@@ -91,7 +91,7 @@ while True:
         blank_image.save("./images3/frame%d.png" % count)  # 이미지 저장 *images3 디렉토리 만들기
         # compute the absolute difference between the current frame and
         # first frame
-        img = cv2.imread("./images/frame%d.png" % count)  # optical flow 포인트만 그려진 이미지 불러오기
+        img = cv2.imread("./images3/frame%d.png" % count)  # optical flow 포인트만 그려진 이미지 불러오기
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # 그레이색으루
         gray = cv2.GaussianBlur(gray, (21, 21), 0)  # 엣지가 남아있는 상태에서 블러링 -> 노이즈 제거 위함
         thresh = None
