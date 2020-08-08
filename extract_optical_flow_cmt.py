@@ -26,7 +26,6 @@ p0 = cv2.goodFeaturesToTrack(old_gray, mask=None, **feature_params)  # Shi-Tomas
 
 # Create a mask image for drawing purposes
 mask = np.zeros_like(old_frame)
-count = 1
 while True:
     ret, frame = cap.read()
     # print(frame.shape) # 높이, 너비, 채널의 수
@@ -51,11 +50,11 @@ while True:
         for i, (new, old) in enumerate(zip(good_new, good_old)): # 예전, 지금 추적 포인트 배열 순회
             a, b = old.ravel() # x, y축 뽑기
             c, d = new.ravel() # x, y축 뽑기 (2, )
-            # mask = cv2.line(mask, (a,b),(c,d), color[i].tolist(), 2)
-            # frame = cv2.circle(frame,(a,b),5,color[i].tolist(),-1)
+
             # create line endpoints
             lines = np.vstack([a, b, c, d]).T.reshape(-1, 2, 2) # shape 맞추기.. 어렵돠
             lines = np.int32(lines)
+
             # create image and draw
             # vis = cv2.cvtColor(frame_gray, cv2.COLOR_GRAY2BGR)
             for (x1, y1), (x2, y2) in lines: # x1 : old, x2 : new point
@@ -64,9 +63,7 @@ while True:
                     continue # 이전 포인트와 다음 포인트의 차의 벡터 크기가 2보다 작으면 pass
                 cv2.line(vis, (x1, y1), (x2, y2), (0, 0, 255), 2) # 아님 line긋고
                 cv2.circle(vis, (x2, y2), 1, (0, 0, 255), 2) # 콩나물 대가리(다음 포인트에)
-        # img = cv2.add(frame,mask)
-        # cv2.imwrite("./images/frame%d.jpg" % count, img)
-        count = count + 1 # 아마 필요없는듯?
+
         cv2.imshow('frame', vis)
 
     k = cv2.waitKey(50) & 0xff
